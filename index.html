@@ -1,0 +1,565 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adriana's Perfect Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+       body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background-color: #f0f8ff;
+            color: #102030;
+        }
+        
+        #main-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, #7abded, #99d4f9, #d5edf9, #eef6fb);
+            background-size: 600% 600%;
+            animation: shimmer 15s ease infinite;
+            transition: background-image 1s ease;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+          background: rgba(230, 245, 255, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal {
+            background: #f8fbff;
+            border: 2px dashed #d72424; /* Red accent */
+            box-shadow: 0 0 15px rgba(255, 50, 50, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            width: 90%;
+            max-width: 850px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-title {
+            color: #cc0000;
+            text-shadow: 0 0 10px rgba(255, 50, 50, 0.2);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .modal-description{
+             color: #0a3f6d;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .choice-item {
+            width: 200px;
+            height: 150px;
+            border: 2px dotted #ff4d4d;
+            background: #f0faff;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
+            border-radius: 22px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .choice-item:hover {
+            transform: scale(1.1) rotate(-1deg);
+            box-shadow: 0 0 15px #ff4d4d91;
+            cursor: pointer;
+        }
+
+        .choice-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #84b0dc, #4089d2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(77, 166, 255, 0.3);
+            border: none;
+            border-radius: 40px;
+            padding: 16px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 18px rgba(77, 166, 255, 0.4);
+        }
+
+        #game-over-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(240, 250, 255, 0.95);
+            border: 3px solid #ff4d4d;
+            color: #cc0000;
+            text-shadow: 0 0 10px rgba(255, 50, 50, 0.2);
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+            font-size: 2.8rem;
+            display: none;
+            z-index: 10;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: gold;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkle 1s ease-out;
+            box-shadow: 0 0 6px gold;
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+/**ANIMACIONES ENTRE MODALS */
+        .modal-overlay {
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: modalEnter 0.5s forwards ease-out;
+        }
+
+        @keyframes modalEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade-out helper class */
+        .modal-overlay.fade-out {
+            animation: modalExit 0.4s forwards ease-in;
+        }
+
+        @keyframes modalExit {
+            to {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+    .detour-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    }
+
+    .detour-image {
+        width: 400px !important;
+        height: 250px !important;
+        border-radius: 20px;
+        border: 3px solid #cc0000;
+        object-fit:cover;
+    }
+
+
+    </style>
+</head>
+<body>
+    <div id="main-stage">
+        <div id="game-over-message">Thank you for playing! Adriana had a great day!</div>
+    </div>
+
+<script>
+    const gameState = {
+        currentStage: 0,
+        choices: {
+            breakfast: null,
+            door: null,
+            store: null,
+            mall: null,
+            party: null,
+            partyDeclined: false
+        }
+    };
+
+    const stages = [
+        {
+            title: "Adriana's perfect day!",
+            type: "button",
+            choices: [{ text: "Start", nextStage: 1 }]
+        },
+        {
+            title: "Breakfast time!",
+            type: "image",
+            choices: [
+                { id: "breakfast1", url: "https://via.placeholder.com/150?text=Breakfast+1", description: "Toast" },
+                { id: "breakfast2", url: "https://via.placeholder.com/150?text=Breakfast+2", description: "Cereal" },
+                { id: "breakfast3", url: "https://via.placeholder.com/150?text=Breakfast+3", description: "Eggs" },
+                { id: "breakfast4", url: "https://via.placeholder.com/150?text=Breakfast+4", description: "Pancakes" },
+                { id: "breakfast5", url: "https://via.placeholder.com/150?text=Breakfast+5", description: "Croissants" }
+            ],
+            nextStage: 2
+        },
+        {
+            title: "Oh! Someone's at the door! Who is it?",
+            type: "image",
+            choices: [
+                { id: "abby", url: "https://media1.s-nbcnews.com/i/streams/2013/March/130315/1C6465325-tdy-130314-abbyleemiller-1.jpg", description: "Abby Lee" },
+                { id: "samdean", url: "https://i0.wp.com/rebekahjbuchanan.com/wp-content/uploads/2019/01/supernatural-spoilers-season-12-3.jpg?fit=620%2C420&ssl=1", description: "Sam & Dean" },
+                { id: "bucky", url: "https://i.pinimg.com/736x/d7/5b/e9/d75be949cc6c1e572c53487e47ae7d46.jpg", description: "Bucky Barnes" },
+                { id: "andrew", url: "https://rollingstoneindia.com/wp-content/uploads/2022/01/AndrewGarfield-1.jpeg", description: "Andrew Garfield" },
+                { id: "aaron", url: "https://media.revistagq.com/photos/65faa3ecab5cabfa819c41fd/1:1/w_2756,h_2756,c_limit/2066784651", description: "Aaron Taylor-Johnson" }
+            ],
+            nextStage: 6
+        },
+        // Detour stage 3 - Abby Lee
+        {
+            title: "Abby Lee screams 'GET ON THE FLOOR!'",
+            type: "detour",
+            choices: [
+                {
+                    id: "dance",
+                    url: "img/abby.webp",
+                }
+            ],
+            description: "Sacas los prohibidos. Youre on top of the pyramid for this week.",
+
+            nextStage: 6
+        },
+        // Detour stage 4 - Sam & Dean ************************************************************************************
+        {
+            title: "Sam & Dean take you to a haunted mansion. They're exorcising... Ben Barnes?",
+            type: "detour",
+            choices: [
+                {
+                    id: "ghosts",
+                    url: "img/samdean.webp",
+                }
+            ],
+            description: "You're helping with the exorcism. Ben is surprisingly cooperative, maybe he believes he's still on set...?",
+            nextStage: 6
+        },
+        // Detour stage 5 - Aaron ***********************************************************************************
+        {
+            title: "Aaron brings Adriana to the court house",
+            type: "detour",
+            choices: [
+                {
+                    id: "bikeride",
+                    url: "img/aaron.webp",
+                }
+            ],
+            description: "He signs the divorce papers and immediately gets down on one knee.",
+            nextStage: 6
+        },
+        {
+            title: "They're taking you shopping. What store do you go to first?",
+            type: "image",
+            choices: [
+                { id: "store1", url: "https://via.placeholder.com/150?text=Store+1", description: "Express" },
+                { id: "store2", url: "https://via.placeholder.com/150?text=Store+2", description: "Forever 21" },
+                { id: "store3", url: "https://via.placeholder.com/150?text=Store+3", description: "Bloomingdale's" },
+                { id: "store4", url: "https://via.placeholder.com/150?text=Store+4", description: "Victoria's Secret" },
+                { id: "store5", url: "https://via.placeholder.com/150?text=Store+5", description: "Abercrombie" }
+            ],
+            nextStage: 7
+        },
+        {
+            title: "You want some lunch, but first… Who do you run into at the mall?",
+            type: "image",
+            choices: [
+                { id: "ariana", url: "https://i.pinimg.com/736x/ee/37/30/ee37309e1befd60392de87024c05c650.jpg", description: "Ariana Grande" },
+                { id: "nicki", url: "https://media.npr.org/assets/img/2023/09/01/minaj_custom-b03a0992f23b6fe5d3d5add53c8920cd1b7e0c42.jpg", description: "Nicki Minaj" },
+                { id: "lana", url: "https://i1.sndcdn.com/artworks-000233336877-36btb8-t500x500.jpg", description: "Lana Del Rey" },
+                { id: "stiles", url: "https://townsquare.media/site/252/files/2022/03/attachment-dylan-obrien-return-teen-wolf-movie.jpg", description: "Stiles Stilinski" },
+                { id: "Sabtay", url: "https://hips.hearstapps.com/hmg-prod/images/taylor-swift-and-sabrina-carpenter-attend-the-67th-annual-news-photo-1739120616.pjpeg?crop=0.668xw:1.00xh;0.143xw,0&resize=1200:*", description: "Sabrina & Taylor" }
+            ],
+            nextStage: 8
+        },
+        {
+            title: "They invite you to a party. Do you go?",
+            type: "button",
+            choices: [
+                { text: "Yes", nextStage: 9 },
+                { text: "No", nextStage: -1 }
+            ]
+        },
+        {
+            title: "Party time!",
+            type: "party",
+            image: "https://via.placeholder.com/300?text=PARTY+TIME!",
+            nextStage: -1
+        },
+        {
+            title: "Oops. You followed Stiles into the woods and… he left you there.",
+            type: "detour",
+            choices: [
+                {
+                    id: "woods",
+                    url: "https://i.quotev.com/tup6bhkkaaaa.jpg",
+                    description: "The breeze is nice though. Hope you brought snacks.",
+                }
+            ],
+            description: "The breeze is nice though. Hope you brought snacks.",
+
+            nextStage: -1
+        },
+        {
+            title: "Lana takes your hand and walks you to... a swamp?",
+            type: "detour",
+            choices: [
+                {
+                    id: "swamp",
+                    url: "img/lana.webp",
+                    description: "She says it's for the aesthetic. You're not convinced.",
+                }
+            ],
+            description: "She says it's for the aesthetic. You're not convinced.",
+            nextStage: -1
+        },
+    ];
+
+    function closeModal(modalOverlay, callback) {
+        modalOverlay.classList.add('fade-out');
+        setTimeout(() => {
+            document.body.removeChild(modalOverlay);
+            if (callback) callback();
+        }, 400);
+    }
+
+    function showStage(stageIndex) {
+        const stage = stages[stageIndex];
+        if (!stage) return;
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+
+        const title = document.createElement('h2');
+        title.className = 'modal-title';
+        title.textContent = stage.title;
+        modal.appendChild(title);
+
+        const desc = document.createElement('h2');
+        desc.className = 'modal-description';
+        desc.textContent = stage.description || '';
+        modal.appendChild(desc);
+
+        if (stage.type === "button") {
+            const container = document.createElement('div');
+            container.style.marginTop = '20px';
+            stage.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'btn';
+                button.textContent = choice.text;
+                button.onclick = () => {
+                    if (choice.text === "No") {
+                        gameState.choices.partyDeclined = true;
+                        gameState.choices.party = "didn't go to the party";
+                        endGame();
+                    }
+
+                    if (choice.nextStage === -1) {
+                        endGame();
+                    } else {
+                        gameState.currentStage = choice.nextStage;
+                        closeModal(modalOverlay, () => showStage(choice.nextStage));
+                    }
+                };
+                container.appendChild(button);
+            });
+            modal.appendChild(container);
+
+        } else if (stage.type === "image") {
+            const container = document.createElement('div');
+            container.className = 'choices-container';
+
+            stage.choices.forEach(choice => {
+                const item = document.createElement('div');
+                item.className = 'choice-item';
+
+                const img = document.createElement('img');
+                img.src = choice.url;
+                img.alt = choice.id;
+                item.appendChild(img);
+
+                item.onclick = () => {
+                    const stageKey = stageIndex === 1 ? 'breakfast' :
+                                    stageIndex === 2 ? 'door' :
+                                    stageIndex === 6 ? 'store' :
+                                    stageIndex === 7 ? 'mall' : null;
+
+                    if (stageKey) {
+                        gameState.choices[stageKey] = choice.description;
+                    }
+
+                    updateBackground(choice.url);
+
+                    setTimeout(() => {
+                        closeModal(modalOverlay, () => {
+                            if (stageIndex === 2) {
+                                const detourMap = {
+                                    "Abby Lee": 3,
+                                    "Sam & Dean": 4,
+                                    "Aaron Taylor-Johnson": 5
+                                };
+
+                                const detourIndex = detourMap[choice.description];
+                                gameState.currentStage = detourIndex !== undefined ? detourIndex : stage.nextStage;
+                                showStage(gameState.currentStage);
+                            }
+                            else if (stageIndex === 7) {
+                                if (choice.description === "Stiles Stilinski") {
+                                    gameState.currentStage = 10;
+                                    showStage(10);
+                                } else if (choice.description === "Lana Del Rey") {
+                                    gameState.currentStage = 11;
+                                    showStage(11);
+                                } else {
+                                    gameState.currentStage = stage.nextStage;
+                                    showStage(stage.nextStage);
+                                }
+                            }
+                            else if (stageIndex === 10 || stageIndex === 11) {
+                                setTimeout(() => {
+                                    endGame();
+                                }, 500);
+                            } else {
+                                gameState.currentStage = stage.nextStage;
+                                showStage(stage.nextStage);
+                            }
+                        });
+                    }, 1000);
+                };
+
+                container.appendChild(item);
+            });
+            modal.appendChild(container);
+
+        } else if (stage.type === "detour") {
+            const container = document.createElement('div');
+            container.className = 'choices-container';
+
+            const choice = stage.choices[0];
+            const item = document.createElement('div');
+            item.className = 'detour-item'; 
+
+            const img = document.createElement('img');
+            img.src = choice.url;
+            img.alt = choice.id;
+            img.className = 'detour-image'; 
+            item.appendChild(img);
+
+            item.onclick = () => {
+                updateBackground(choice.url);
+                closeModal(modalOverlay, () => showStage(stage.nextStage));
+            };
+
+            container.appendChild(item);
+            modal.appendChild(container);
+        }
+
+
+        else if (stage.type === "party") {
+            const container = document.createElement('div');
+            container.className = 'choices-container';
+
+            const partyImg = document.createElement('img');
+            partyImg.src = stage.image;
+            partyImg.style.width = '600px';
+            partyImg.style.height = '450px';
+            partyImg.style.borderRadius = '20px';
+            partyImg.style.border = '3px solid #cc0000';
+            container.appendChild(partyImg);
+            modal.appendChild(container);
+            setTimeout(() => {
+                document.body.removeChild(modalOverlay);
+                endGame();
+            }, 3000);
+        }
+
+        modalOverlay.appendChild(modal);
+        document.body.appendChild(modalOverlay);
+    }
+
+
+    function updateBackground(imageUrl) {
+        const mainStage = document.getElementById('main-stage');
+        mainStage.style.backgroundImage = `url(${imageUrl})`;
+        mainStage.style.backgroundSize = 'cover';
+        mainStage.style.backgroundPosition = 'center';
+    }
+
+    function endGame() {
+        const message = document.getElementById('game-over-message');
+
+        const breakfast = gameState.choices.breakfast || 'nothing';
+        const doorPerson = gameState.choices.door || 'someone';
+        const store = gameState.choices.store || 'a store';
+        const mallPerson = gameState.choices.mall || 'a friend';
+
+        let partySummary;
+
+        if (gameState.choices.partyDeclined) {
+            partySummary = `didn't go partying with ${mallPerson}`;
+        } else if (mallPerson === "Lana Del Rey" || mallPerson === "Stiles Stilinski") {
+            partySummary = `attended a... different kind of party...}`;
+        } else {
+            partySummary =  `went partying with ${mallPerson}`;
+        }
+
+        const summary = `Adriana had ${breakfast} for breakfast, then ${doorPerson} took her shopping at ${store}. She ran into ${mallPerson} and ${partySummary}!`;
+
+        message.innerHTML = `Thank you for playing!<br>${summary}`;
+        message.style.padding = '20px';
+        message.style.fontSize = '1.5rem';
+        message.style.lineHeight = '1.6';
+        message.style.display = 'block';
+
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showStage(0);
+    });
+</script>
+
+</body>
+</html>
