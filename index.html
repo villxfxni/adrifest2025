@@ -8,13 +8,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            scroll-behavior: auto;
+
         }
         
        body {
             font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            overflow: hidden;
-            height: 100vh;
+            overflow: auto;
+            height: 100vh;            
             background-color: #f0f8ff;
             color: #102030;
         }
@@ -22,7 +22,7 @@
         #main-stage {
             position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             background: linear-gradient(120deg, #7abded, #99d4f9, #d5edf9, #eef6fb);
             background-size: 600% 600%;
             animation: shimmer 15s ease infinite;
@@ -54,9 +54,11 @@
             border: 2px dashed #d72424; /* Red accent */
             box-shadow: 0 0 15px rgba(255, 50, 50, 0.2);
             border-radius: 25px;
-            padding: 30px;
             width: 90%;
             max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
             text-align: center;
             position: relative;
         }
@@ -113,7 +115,7 @@
             box-shadow: 0 5px 15px rgba(77, 166, 255, 0.3);
             border: none;
             border-radius: 40px;
-            padding: 16px 40px;
+            padding: 10px 20px;
             font-size: 1.5rem;
             font-weight: bold;
             margin: 10px;
@@ -134,7 +136,7 @@
             background: rgba(240, 250, 255, 0.95);
             border: 3px solid #ff4d4d;
             color: #cc0000;
-            text-shadow: 0 0 10px rgba(255, 50, 50, 0.2);
+            text-shadow: 0 0 10px #ff323233;
             padding: 35px;
             border-radius: 25px;
             text-align: center;
@@ -172,7 +174,6 @@
             }
         }
 
-        /* Fade-out helper class */
         .modal-overlay.fade-out {
             animation: modalExit 0.4s forwards ease-in;
         }
@@ -221,7 +222,7 @@
 
     const stages = [
         {
-            title: "Adriana's perfect day!",
+            title: "",
             type: "button",
             choices: [{ text: "Start", nextStage: 1 }]
         },
@@ -229,11 +230,11 @@
             title: "Breakfast time!",
             type: "image",
             choices: [
-                { id: "breakfast1", url: "https://via.placeholder.com/150?text=Breakfast+1", description: "Toast" },
-                { id: "breakfast2", url: "https://via.placeholder.com/150?text=Breakfast+2", description: "Cereal" },
-                { id: "breakfast3", url: "https://via.placeholder.com/150?text=Breakfast+3", description: "Eggs" },
-                { id: "breakfast4", url: "https://via.placeholder.com/150?text=Breakfast+4", description: "Pancakes" },
-                { id: "breakfast5", url: "https://via.placeholder.com/150?text=Breakfast+5", description: "Croissants" }
+                { id: "breakfast1", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShSQehhWtEPYmCyCcjZxu6C8RFHjeCh3LsYA&s", description: "Americano" },
+                { id: "breakfast2", url: "https://dechocolate.net/wp-content/uploads/2013/01/cereales-chocapic.jpg", description: "Cereal" },
+                { id: "breakfast3", url: "https://cafedelites.com/wp-content/uploads/2017/09/Fudgy-Chocolate-Cookies-IMAGE-15.jpg", description: "Cookies" },
+                { id: "breakfast4", url: "https://www.whiskaffair.com/wp-content/uploads/2022/02/Air-Fryer-Toast-2-3.jpg", description: "Toast" },
+                { id: "breakfast5", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFxMDKLa4NImPFNys-tFRAK4AJBd6rrdHilQ&s", description: "Pancakes" }
             ],
             nextStage: 2
         },
@@ -293,11 +294,11 @@
             title: "They're taking you shopping. What store do you go to first?",
             type: "image",
             choices: [
-                { id: "store1", url: "https://via.placeholder.com/150?text=Store+1", description: "Express" },
-                { id: "store2", url: "https://via.placeholder.com/150?text=Store+2", description: "Forever 21" },
-                { id: "store3", url: "https://via.placeholder.com/150?text=Store+3", description: "Bloomingdale's" },
-                { id: "store4", url: "https://via.placeholder.com/150?text=Store+4", description: "Victoria's Secret" },
-                { id: "store5", url: "https://via.placeholder.com/150?text=Store+5", description: "Abercrombie" }
+                { id: "store1", url: "https://cloudfront-eu-central-1.images.arcpublishing.com/businessoffashion/KMDVOEAO3BCV7G6RYHPR5RD6F4.jpg", description: "Zara" },
+                { id: "store2", url: "https://i.insider.com/5f466bb189aff80028ab7fea?width=700", description: "Chanel" },
+                { id: "store3", url: "https://media.istockphoto.com/id/922679614/photo/h-m-sign-on-the-wall-h-m-hennes-mauritz-ab-is-a-swedish-multinational-clothing-retail-company.jpg?s=612x612&w=0&k=20&c=lpMGVkxr1T3R03qM2K2laMHYhdwswHfMljwRv5OhfO0=", description: "H&M" },
+                { id: "store4", url: "https://i.pinimg.com/736x/05/08/9b/05089b85de8cb421ad31d7000c6f43ec.jpg", description: "YSL" },
+                { id: "store5", url: "https://bloximages.chicago2.vip.townnews.com/wvnews.com/content/tncms/assets/v3/editorial/1/17/117e4e34-bd0f-5faa-9eb4-9a69558fd45c/5f1a464287f9a.image.jpg?crop=533%2C399%2C83%2C0&resize=1200%2C898&order=crop%2Cresize", description: "Justice" }
             ],
             nextStage: 7
         },
@@ -314,7 +315,7 @@
             nextStage: 8
         },
         {
-            title: "They invite you to a party. Do you go?",
+            title: "She invites you to a party. Do you go?",
             type: "button",
             choices: [
                 { text: "Yes", nextStage: 9 },
@@ -388,6 +389,15 @@
             const container = document.createElement('div');
             container.style.marginTop = '20px';
             stage.choices.forEach(choice => {
+                if(stageIndex===0){
+                    modal.style.backgroundImage = "url('img/adri.png')";
+                    modal.style.backgroundSize = "cover";
+                    modal.style.backgroundPosition = "center";
+                    modal.style.backgroundRepeat = "no-repeat";
+                    modal.style.height="600px"
+                } else {
+                    modal.style.backgroundImage = "";
+                }
                 const button = document.createElement('button');
                 button.className = 'btn';
                 button.textContent = choice.text;
@@ -450,9 +460,12 @@
                             else if (stageIndex === 7) {
                                 if (choice.description === "Stiles Stilinski") {
                                     gameState.currentStage = 10;
+                                    stage.nextStage=-1;
+
                                     showStage(10);
                                 } else if (choice.description === "Lana Del Rey") {
                                     gameState.currentStage = 11;
+                                    stage.nextStage=-1;
                                     showStage(11);
                                 } else {
                                     gameState.currentStage = stage.nextStage;
@@ -460,9 +473,12 @@
                                 }
                             }
                             else if (stageIndex === 10 || stageIndex === 11) {
-                                setTimeout(() => {
+                             if (choice.nextStage === -1) {
                                     endGame();
-                                }, 500);
+                                } else {
+                                    gameState.currentStage = choice.nextStage;
+                                    closeModal(modalOverlay, () => showStage(choice.nextStage));
+                                }
                             } else {
                                 gameState.currentStage = stage.nextStage;
                                 showStage(stage.nextStage);
@@ -487,13 +503,20 @@
             img.src = choice.url;
             img.alt = choice.id;
             img.className = 'detour-image'; 
-            item.appendChild(img);
 
+            item.appendChild(img);
             item.onclick = () => {
                 updateBackground(choice.url);
-                closeModal(modalOverlay, () => showStage(stage.nextStage));
-            };
+                if (stage.nextStage === -1) {
+                   setTimeout(() => {
+                        closeModal(modalOverlay, () => endGame());
+                    }, 500);
+                } else {
+                    gameState.currentStage = stage.nextStage;
+                    closeModal(modalOverlay, () => showStage(stage.nextStage));
+                }
 
+            };
             container.appendChild(item);
             modal.appendChild(container);
         }
@@ -527,6 +550,7 @@
         mainStage.style.backgroundImage = `url(${imageUrl})`;
         mainStage.style.backgroundSize = 'cover';
         mainStage.style.backgroundPosition = 'center';
+        mainStage.style.backgroundColor='#32aaff33'
     }
 
     function endGame() {
